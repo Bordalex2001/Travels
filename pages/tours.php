@@ -4,55 +4,81 @@
 global $link;
 connect($link, DB_NAME);
 
-echo '<form action="index.php?page=1" method="post">';
-echo '<select name="countryid" class="col-sm-3 col-md-3 col-lg-3">';
-
-$res=mysqli_query($link,"SELECT * FROM countries ORDER BY country");
+echo '<div class="form-inline">';
+echo '<select name="countryid" id="countryid" class="col-sm-3 col-md-3 col-lg-3" onchange="showCities(this.value)">';
 echo '<option value="0">Select country...</option>';
-while ($row=mysqli_fetch_array($res)) {
+$res=mysqli_query($link,'select * from countries order by country');
+while ($row=mysqli_fetch_array($res))
+{
     echo '<option value="'.$row[0].'">'.$row[1].'</option>';
 }
-mysqli_free_result($res);
-echo '<input type="submit" name="selcountry" value="Select Country"
-    class="btn btn-xs btn-primary">';
 echo '</select>';
-if(isset($_POST['selcountry']))
+echo '<br>';
+//list of cities
+echo '<select name="cityid" id="citylist" class="col-sm-3 col-md-3 col-lg-3" onchange="showHotels(this.value)"></select>';
+echo '</div>';
+//list of hotels
+echo '<div id="hotels"></div>';
+//javascript functions
+?>
+
+<script>
+let ao = null;
+
+function showCities(countryid)
 {
-    echo '<br/>';
-    $countryid=$_POST['countryid'];
-    if($countryid == 0) exit();
-    $result=mysqli_query($link, "SELECT * FROM cities where countryid=".$countryid." ORDER BY city");
-    echo '<select name="cityid" class="col-sm-3 col-md-3 col-lg-3">';
-    echo '<option value="0">Select city...</option>';
-    while ($row=mysqli_fetch_array($result)) {
-        echo '<option value="'.$row[0].'">'.$row[1].'</option>';
+    const cities = document.getElementById('citylist');
+    if(countryid === "0")
+    {
+        cities.innerHTML = '';
     }
-    mysqli_free_result($result);
-    echo '</select>';
-    echo '<input type="submit" name="selcity" value="Select City"
-        class="btn btn-xs btn-primary">';
+    if(window.XMLHttpRequest)
+    {
+        ao = new XMLHttpRequest();
+    }
+    else
+    {
+        ao = new ActiveXObject('Msxml2.XMLHTTP');
+    }
+
+    ao.onreadystatechange = function()
+    {
+        if(ao.readyState === 4 && ao.status === 200)
+        {
+            cities.innerHTML = ao.responseText;
+        }
+    }
+
+    ao.open('GET', 'pages/ajax1.php?countryid=' + countryid, true);
+    ao.send(null);
 }
-echo '</form>';
-if(isset($_POST['selcity']))
+
+function showHotels(cityid)
 {
-    $cityid=$_POST['cityid'];
-    $sel='SELECT co.country, ci.city, ho.hotel, ho.cost, ho.stars, ho.id
-    FROM hotels ho, cities ci, countries co
-    WHERE ho.cityid=ci.id
-    AND ho.countryid=co.id
-    AND ho.cityid='.$cityid;
-    $res=mysqli_query($link, $sel);
-    echo '<table class="table table-striped tbtours text-center">';
-    echo '<thead style="font-weight: bold">
-        <td>Hotel</td><td>Country</td><td>City</td>
-        <td>Price</td><td>Stars</td><td>link</td></thead>';
-    while ($row=mysqli_fetch_array($res)) {
-        echo '<tr id="'.$row[1].'">';
-        echo '<td>'.$row[2].'</td> <td>'.$row[0].'</td> <td>'.$row[1].'</td>
-              <td>$'.$row[3].'</td><td>'.$row[4].'</td>
-              <td <a href="pages/hotelinfo.php?hotel=
-              '.$row[5].'" target="_blank"> more info</a></td>';
-        echo '</tr>';
+    const hotels = document.getElementById('hotels');
+    if(cityid === "0")
+    {
+        hotels.innerHTML = '';
     }
-    echo '</table><br>';
+    if(window.XMLHttpRequest)
+    {
+        ao = new XMLHttpRequest();
+    }
+    else
+    {
+        ao = new ActiveXObject('Msxml2.XMLHTTP');
+    }
+
+    ao.onreadystatechange = function()
+    {
+        if(ao.readyState === 4 && ao.status === 200)
+        {
+            hotels.innerHTML = ao.responseText;
+        }
+    }
+
+    ao.open('POST', 'pages/ajax2.php', true);
+    ao.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    ao.send('cityid=' + cityid);
 }
+</script>
