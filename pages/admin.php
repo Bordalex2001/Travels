@@ -75,7 +75,7 @@ if (!isset($_SESSION['radmin']))
     echo '</table>';
     mysqli_free_result($res);
     $res=mysqli_query($link,'select * from countries');
-    echo '<select name="countryname" class="form-control">';
+    echo '<select name="countryname" class="">';
     while ($row=mysqli_fetch_array($res)){
         echo '<option value="'.$row[0].'">'.$row[1].'</option>';
     }
@@ -129,7 +129,7 @@ if (!isset($_SESSION['radmin']))
     WHERE ho.cityid=ci.id and ho.countryid=co.id';
     $res=mysqli_query($link, $sel);
     $err=mysqli_errno($link);
-    echo '<table class="table" width="100%">';
+    echo '<table class="table">';
     while ($row=mysqli_fetch_array($res)) {
         echo '<tr>';
         echo '<td>'.$row[2].'</td>';
@@ -185,8 +185,8 @@ if (!isset($_SESSION['radmin']))
                 $idc=substr($k,2);
                 $del='delete from hotels where id='.$idc;
                 mysqli_query($link, $del);
-                if ($err){
-                    echo 'Error code:'.$err.'<br>';
+                if (mysqli_errno($link)){
+                    echo 'Error code:'.mysqli_errno($link).'<br>';
                     exit();
                 }
             }
@@ -213,20 +213,19 @@ if (!isset($_SESSION['radmin']))
         echo $row[1].'  '.$row[2].'  '.$row[3].'</option>';
     }
     mysqli_free_result($res);
-    echo '<input type="file" name="file[]" multipleaccept="image/*">';
+    echo '</select>';
+    echo '<input type="file" name="file[]" multiple accept="image/*">';
     echo '<input type="submit" name="addimage" value="Add"
           class="btn btn-sm btn-info">';
-    echo '</select>';
     echo '</form>';
-    if(isset($_REQUEST['addimage'])){
+    if(isset($_POST['addimage'])){
         foreach($_FILES['file']['name'] as $k => $v) {
-            if($_FILES['file']['error'][$k] !=0){
+            if($_FILES['file']['error'][$k] != 0){
                 echo '<script>alert("Upload file error:'.$v.'")</script>';
                 continue;
             }
             if(move_uploaded_file($_FILES['file']['tmp_name'][$k], 'images/'.$v)){
-                $ins='insert into images(hotelid,imagepath)
-                    values('.$_REQUEST['hotelid'].',"images/'.$v.'")';
+                $ins='insert into images(hotelid,imagepath) values('.$_REQUEST['hotelid'].',"images/'.$v.'")';
                 mysqli_query($link, $ins);
             }
         }

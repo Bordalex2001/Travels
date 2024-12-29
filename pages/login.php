@@ -3,10 +3,10 @@ if (isset($_SESSION['ruser']))
 {
     echo '<form action="index.php';
     if (isset($_GET['page'])) echo '?page='.$_GET['page'];
-    echo '" class="form-inline pull-right" method="post">';
-    echo '<h4>Hello, <span>'.$_SESSION['ruser'].'</span> ';
+    echo '" class="row row-cols-lg-auto justify-content-end" method="post">';
+    echo '<h4>Hello, <span>'.$_SESSION['ruser'].'</span>';
     echo '<input type="submit" value="Logout" id="ex" name="ex"
-        class="btn btn-default btn-xs"></h4>';
+        class="btn btn-outline-primary btn-xs ms-lg-1"></h4>';
     echo '</form>';
     if (isset($_POST['ex']))
     {
@@ -32,7 +32,7 @@ else
         echo '<input type="text" name="login" size="10" placeholder="login">
         <input type="password" name="pass" size="10" placeholder="password">
         <input type="submit" id="press" value="Login"
-            class="btn btn-default btn-xs" name="press">
+            class="btn btn-outline-primary btn-xs" name="press">
         </form>';
     }
 }

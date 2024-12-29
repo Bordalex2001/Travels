@@ -1,20 +1,18 @@
 <?php
 global $link;
 connect($link, DB_NAME);
-echo '<form action="index.php?page=5" method="post"
-        enctype="multipart/form-data" class="input-group">';
+echo '<form action="index.php?page=6" method="post" enctype="multipart/form-data" class="input-group">';
 echo '<select name="userid">';
-$sel='select * from users where roleid=2 order by login';
+$sel='select * from users order by login';
 $res=mysqli_query($link, $sel);
 while($row=mysqli_fetch_array($res)){
     echo '<option value="'.$row[0].'">'.$row[1].'</option>';
 }
 mysqli_free_result($res);
 echo '</select>';
-echo '<input type="hidden" name="MAX_FILE_SIZE" value="500000" />';
+//echo '<input type="hidden" name="MAX_FILE_SIZE" value="500000" />';
 echo '<input type="file" name="file" accept="image/*">';
-echo '<input type="submit" name="addadmin" value="Add"
-        class="btn btn-sm btn-info">';
+echo '<input type="submit" name="addadmin" value="Add" class="btn btn-sm btn-info">';
 echo '</form>';
 if(isset($_POST['addadmin']))
 {
@@ -24,9 +22,8 @@ if(isset($_POST['addadmin']))
     $img=fread($file, filesize($fn));
     fclose($file);
     $img=addslashes($img);
-    $ins='update users set avatar="'.$img.', roleid=1 " where
-        id ='.$userid;
-    mysqli_query($link, $ins);
+    $upd='update users set avatar="'.$img.'", roleid=1 where id ='.$userid;
+    mysqli_query($link, $upd);
 }
 $sel='select * from users where roleid=1 order by login';
 $res=mysqli_query($link, $sel);
