@@ -48,21 +48,22 @@ if(isset($_GET['hotel'])) {
     echo '</div><div class="col-md-6"><p class="well">'.$hinfo.'</p></div>';
     echo '</div>';
 
-    echo '<div class="row text-center">';
+    echo '<div class="row">';
     echo '<h2>Comments:</h2>';
-    $sel = 'SELECT comment, createdat FROM comments WHERE hotelid='.$hotel.' ORDER BY createdat DESC';
+    $sel = 'SELECT comment, сreatedat from comments WHERE hotelid='.$hotel.' ORDER BY сreatedat DESC';
     $res = mysqli_query($link, $sel);
-
-    while ($row = mysqli_fetch_array($res)) {
-        if ($row > 0)
+    if(mysqli_num_rows($res) > 0)
+    {
+        while ($row = mysqli_fetch_array($res))
         {
             echo '<div class="comment">';
-            echo '<p>' . htmlspecialchars($row[1]) . ' <small>(' . $row[3] . ')</small></p>';
+            echo '<p>' . $row[0] . '<small class="ms-5">' . $row[1] . '</small></p>';
             echo '</div>';
         }
-        else {
-            echo '<p>There are no comments yet.</p>';
-        }
+    }
+    else
+    {
+        echo '<p>There are no comments yet.</p>';
     }
     mysqli_free_result($res);
     echo '</div>';
